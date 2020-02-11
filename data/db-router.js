@@ -59,21 +59,55 @@ router.post(`/`, async (req, res) => {
   }
 })
 
-router.post(`/:id/comments`, async (req, res) => {
+// router.post(`/:id/comments`, async (req, res) => {
+//   const { id } = req.params;
+//   const post = req.body;
+//   try {
+//     const addedComment = await Posts.insertComment(id);
+//     if (!post) {
+//       res.status(404).json({ message: 'The post with the specified ID does not exists' })
+//     } else if (!post.text) {
+//       res.status(400).json({ message: 'Please provide text for the comment' })
+//     } else {
+//       res.status(201).json(post)
+//     }
+//   }
+//   catch {
+//     res.status(500).json({ message: 'There was an error while saving the comment to the database' })
+//   }
+// })
+
+router.delete(`/:id`, async (req, res) => {
   const { id } = req.params;
-  const specPost = req.body;
+  const post = req.body;
   try {
-    const post = Posts.findCommentById(id);
+    const removed = await Posts.remove(id);
     if (!post) {
-      res.status(404).json({ message: 'The post with the specified ID does not exists' })
-    } else if (!specPost.text) {
-      res.status(400).json({ message: 'Please provide text for the comment' })
+      res.status(404).json({ message: 'The post with the specified ID is not found' })
     } else {
-      res.status(201).json(specPost)
+      res.status(200).json(removed)
+    }
+  }
+  catch{
+    res.status(500).json({ message: 'The post could not be removed' })
+  }
+})
+
+router.put(`/:id`, async (req, res) => {
+  const { id } = req.params;
+  const post = req.body;
+  try {
+    const updated = await Posts.update(id, post);
+    if (!post) {
+      res.status(404).json({ message: 'The post with the specified ID is not found' })
+    } else if (!post.title || !post.contents) {
+      res.status(400).json({ message: 'Please provide the title and contents for the post' })
+    } else {
+      res.status(200).json(updated)
     }
   }
   catch {
-    res.status(500).json({ message: 'There was an error while saving the comment to the database' })
+    res.status(500).json({ message: 'The post information could not be modified' })
   }
 })
 
