@@ -60,16 +60,16 @@ router.post(`/`, async (req, res) => {
 })
 
 // router.post(`/:id/comments`, async (req, res) => {
-//   const { id } = req.params;
 //   const post = req.body;
+//   const comment = post.text
 //   try {
-//     const addedComment = await Posts.insertComment(id);
+//     const newComment = await Posts.insertComment(comment);
 //     if (!post) {
 //       res.status(404).json({ message: 'The post with the specified ID does not exists' })
 //     } else if (!post.text) {
 //       res.status(400).json({ message: 'Please provide text for the comment' })
 //     } else {
-//       res.status(201).json(post)
+//       res.status(201).json(newComment)
 //     }
 //   }
 //   catch {
