@@ -32,7 +32,7 @@ router.get(`/:id`, async (req, res) => {
 router.get(`/:id/comments`, async (req, res) => {
   const { id } = req.params;
   try {
-    const postComment = await Posts.findCommentById(id);
+    const postComment = await Posts.findPostComments(id);
     if (!postComment) {
       res.status(404).json({ message: 'The post with the specified ID does not exists' })
     } else {
@@ -47,11 +47,11 @@ router.get(`/:id/comments`, async (req, res) => {
 router.post(`/`, async (req, res) => {
   const post = req.body;
   try {
-    await Posts.insert(post)
+    const inserted = await Posts.insert(post)
     if (!post.title || !post.contents) {
       res.status(400).json({ message: 'Please provide title and contents for the post' })
     } else {
-      res.status(201).json(post);
+      res.status(201).json(inserted);
     }
   }
   catch {
@@ -61,17 +61,17 @@ router.post(`/`, async (req, res) => {
 
 router.post(`/:id/comments`, async (req, res) => {
   const { id } = req.params;
+  const post = await Posts.findById(id);
+  const comment = req.body;
   try {
-    const post = await Posts.findCommentById(id);
-    console.log(post)
     if (!post) {
       res.status(404).json({ message: 'The post with the specified ID does not exists' })
-    } else if (!post[0].text) {
+    } else if (!comment.text) {
       res.status(400).json({ message: 'Please provide text for the comment' })
     } else {
-      res.status(201).json(post)
+      const inserted = await Posts.insertComment({ post_id: id, ...comment });
+      res.status(201).json(inserted)
     }
-    console.log(comment)
   }
   catch {
     res.status(500).json({ message: 'There was an error while saving the comment to the database' })
